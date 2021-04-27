@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-04-27T11:48:17Z</date>
+    <groups>
+        <group>
+            <name>Templates/Modules</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Print Servers</template>
+            <name>Template Print Servers</name>
+            <groups>
+                <group>
+                    <name>Templates/Modules</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Print Server Metrics</name>
+                </application>
+                <application>
+                    <name>Print Server Metrics\JobErrors</name>
+                </application>
+                <application>
+                    <name>Print Server Metrics\Jobs</name>
+                </application>
+                <application>
+                    <name>Print Server Metrics\Not Ready Errors</name>
+                </application>
+                <application>
+                    <name>Print Server Metrics\Out of Paper Errors</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>PS Spooler\Job Errors</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>wmi.getall[root/cimv2,select JobErrors from Win32_PerfFormattedData_Spooler_PrintQueue]</key>
+                    <history>7d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Print Server Metrics</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>PS Spooler\Jobs</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>wmi.getall[root/cimv2,select Jobs from Win32_PerfFormattedData_Spooler_PrintQueue]</key>
+                    <history>7d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Print Server Metrics</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>PS Spooler\Not Ready Errors</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>wmi.getall[root/cimv2,select NotReadyErrors from Win32_PerfFormattedData_Spooler_PrintQueue]</key>
+                    <history>7d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Print Server Metrics</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>PS Spooler\Out of Paper Errors</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>wmi.getall[root/cimv2,select OutofPaperErrors from Win32_PerfFormattedData_Spooler_PrintQueue]</key>
+                    <history>7d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Print Server Metrics</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>PS Printer\Status</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>wmi.getall[root/cimv2,select Status from Win32_Printer]</key>
+                    <history>7d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Print Server Metrics</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>printers_JobErrors</name>
+                    <type>DEPENDENT</type>
+                    <key>Name.Printers.JobErrors</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>{#DEVNAME} JobErrors</name>
+                            <type>DEPENDENT</type>
+                            <key>JobErrors.[{#DEVNAME}]</key>
+                            <delay>0</delay>
+                            <history>14d</history>
+                            <applications>
+                                <application>
+                                    <name>Print Server Metrics</name>
+                                </application>
+                                <application>
+                                    <name>Print Server Metrics\JobErrors</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$[?(@.Name == &quot;{#DEVNAME}&quot;)].JobErrors.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>wmi.getall[root/cimv2,select JobErrors from Win32_PerfFormattedData_Spooler_PrintQueue]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>wmi.getall[root/cimv2,select JobErrors from Win32_PerfFormattedData_Spooler_PrintQueue]</key>
+                    </master_item>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>output = JSON.parse(value).map(function(dev){
+    return {
+        &quot;{#DEVNAME}&quot;: dev.Name
+    }})
+return JSON.stringify({&quot;data&quot;: output})</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>printers_Jobs</name>
+                    <type>DEPENDENT</type>
+                    <key>Name.Printers.Jobs</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>{#DEVNAME} Jobs</name>
+                            <type>DEPENDENT</type>
+                            <key>Jobs.[{#DEVNAME}]</key>
+                            <delay>0</delay>
+                            <history>14d</history>
+                            <applications>
+                                <application>
+                                    <name>Print Server Metrics</name>
+                                </application>
+                                <application>
+                                    <name>Print Server Metrics\Jobs</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$[?(@.Name == &quot;{#DEVNAME}&quot;)].Jobs.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>wmi.getall[root/cimv2,select Jobs from Win32_PerfFormattedData_Spooler_PrintQueue]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>wmi.getall[root/cimv2,select Jobs from Win32_PerfFormattedData_Spooler_PrintQueue]</key>
+                    </master_item>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>output = JSON.parse(value).map(function(dev){
+    return {
+        &quot;{#DEVNAME}&quot;: dev.Name
+    }})
+return JSON.stringify({&quot;data&quot;: output})</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>printers_NotReadyErrors</name>
+                    <type>DEPENDENT</type>
+                    <key>Name.Printers.NotReadyErrors</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>{#DEVNAME} NotReadyErrors</name>
+                            <type>DEPENDENT</type>
+                            <key>NotReadyErrors.[{#DEVNAME}]</key>
+                            <delay>0</delay>
+                            <history>14d</history>
+                            <applications>
+                                <application>
+                                    <name>Print Server Metrics</name>
+                                </application>
+                                <application>
+                                    <name>Print Server Metrics\Not Ready Errors</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$[?(@.Name == &quot;{#DEVNAME}&quot;)].NotReadyErrors.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>wmi.getall[root/cimv2,select NotReadyErrors from Win32_PerfFormattedData_Spooler_PrintQueue]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>wmi.getall[root/cimv2,select NotReadyErrors from Win32_PerfFormattedData_Spooler_PrintQueue]</key>
+                    </master_item>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>output = JSON.parse(value).map(function(dev){
+    return {
+        &quot;{#DEVNAME}&quot;: dev.Name
+    }})
+return JSON.stringify({&quot;data&quot;: output})</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>printers_OutofPaperErrors</name>
+                    <type>DEPENDENT</type>
+                    <key>Name.Printers.OutofPaperErrors</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>{#DEVNAME} Out of Paper Errors</name>
+                            <type>DEPENDENT</type>
+                            <key>OutofPaperErrors.[{#DEVNAME}]</key>
+                            <delay>0</delay>
+                            <history>14d</history>
+                            <applications>
+                                <application>
+                                    <name>Print Server Metrics</name>
+                                </application>
+                                <application>
+                                    <name>Print Server Metrics\Out of Paper Errors</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$[?(@.Name == &quot;{#DEVNAME}&quot;)].OutofPaperErrors.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>wmi.getall[root/cimv2,select OutofPaperErrors from Win32_PerfFormattedData_Spooler_PrintQueue]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>wmi.getall[root/cimv2,select OutofPaperErrors from Win32_PerfFormattedData_Spooler_PrintQueue]</key>
+                    </master_item>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>output = JSON.parse(value).map(function(dev){
+    return {
+        &quot;{#DEVNAME}&quot;: dev.Name
+    }})
+return JSON.stringify({&quot;data&quot;: output})</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>printers_Status</name>
+                    <type>DEPENDENT</type>
+                    <key>Name.Printers.Status</key>
+                    <delay>0</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>{#DEVNAME} Status</name>
+                            <type>DEPENDENT</type>
+                            <key>Status.[{#DEVNAME}]</key>
+                            <delay>0</delay>
+                            <history>14d</history>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <applications>
+                                <application>
+                                    <name>Print Server Metrics</name>
+                                </application>
+                            </applications>
+                            <application_prototypes>
+                                <application_prototype>
+                                    <name>Print Server Metrics\Out of Paper Errors</name>
+                                </application_prototype>
+                            </application_prototypes>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$[?(@.DeviceID == &quot;{#DEVNAME}&quot;)].Status.first()</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>wmi.getall[root/cimv2,select Status from Win32_Printer]</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>wmi.getall[root/cimv2,select Status from Win32_Printer]</key>
+                    </master_item>
+                    <preprocessing>
+                        <step>
+                            <type>JAVASCRIPT</type>
+                            <params>output = JSON.parse(value).map(function(dev){
+    return {
+        &quot;{#DEVNAME}&quot;: dev.DeviceID
+    }})
+return JSON.stringify({&quot;data&quot;: output})</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+            </discovery_rules>
+        </template>
+    </templates>
+</zabbix_export>
